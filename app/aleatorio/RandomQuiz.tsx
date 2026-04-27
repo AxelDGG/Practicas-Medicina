@@ -6,14 +6,9 @@ import type { Question } from "@/data/types";
 import { shuffle } from "@/lib/shuffle";
 import { T, useLang } from "@/lib/i18n";
 
-const RANDOM_SIZE = 25;
-
 export default function RandomQuiz({ questions }: { questions: Question[] }) {
   const [lang] = useLang();
-  const sample = useMemo(
-    () => shuffle(questions).slice(0, Math.min(RANDOM_SIZE, questions.length)),
-    [questions]
-  );
+  const sample = useMemo(() => shuffle(questions), [questions]);
   return (
     <>
       <div className="mb-8">

@@ -119,6 +119,33 @@ export const TOPICS: Topic[] = [
       en: "ANA, anti-dsDNA, type I IFN, complement, multisystem damage.",
     },
   },
+  {
+    slug: "artritis-reumatoide-enarm",
+    source: "Inmunohematología — ENARM 1",
+    title: { es: "Artritis reumatoide (ENARM)", en: "Rheumatoid arthritis (ENARM)" },
+    description: {
+      es: "Casos clínicos: ACPA, criterios ACR/EULAR, DMARDs y biológicos.",
+      en: "Cases: ACPA, ACR/EULAR criteria, DMARDs and biologics.",
+    },
+  },
+  {
+    slug: "lupus-enarm",
+    source: "Inmunohematología — ENARM 2",
+    title: { es: "Lupus eritematoso sistémico (ENARM)", en: "Systemic lupus erythematosus (ENARM)" },
+    description: {
+      es: "Casos clínicos: criterios EULAR/ACR, nefritis, biológicos.",
+      en: "Cases: EULAR/ACR criteria, nephritis, biologics.",
+    },
+  },
+  {
+    slug: "inmunohematologia-enarm",
+    source: "Inmunohematología — ENARM 3",
+    title: { es: "Inmunohematología (ENARM)", en: "Immunohematology (ENARM)" },
+    description: {
+      es: "Casos clínicos: LAD, CGD, XLA, anemias y trastornos plaquetarios.",
+      en: "Cases: LAD, CGD, XLA, anemias and platelet disorders.",
+    },
+  },
 ];
 
 export const TOPIC_BY_SLUG: Record<string, Topic> = Object.fromEntries(

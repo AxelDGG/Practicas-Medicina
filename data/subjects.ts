@@ -15,7 +15,14 @@ export const SUBJECTS: Subject[] = [
       es: "Anemias, coagulación, inmunodeficiencias, AR y LES.",
       en: "Anemias, coagulation, immunodeficiencies, RA and SLE.",
     },
-    topicSlugs: ["inmunohematologia", "artritis-reumatoide", "lupus"],
+    topicSlugs: [
+      "inmunohematologia",
+      "artritis-reumatoide",
+      "lupus",
+      "artritis-reumatoide-enarm",
+      "lupus-enarm",
+      "inmunohematologia-enarm",
+    ],
   },
   {
     slug: "alergologia-inmunologia",

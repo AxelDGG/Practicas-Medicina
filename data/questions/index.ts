@@ -11,6 +11,9 @@ import { contacto } from "./contacto";
 import { inmunohematologia } from "./inmunohematologia";
 import { artritisReumatoide } from "./artritis-reumatoide";
 import { lupus } from "./lupus";
+import { artritisReumatoideEnarm } from "./artritis-reumatoide-enarm";
+import { lupusEnarm } from "./lupus-enarm";
+import { inmunohematologiaEnarm } from "./inmunohematologia-enarm";
 
 export const ALL_QUESTIONS: Question[] = [
   ...tolerancia,
@@ -25,6 +28,9 @@ export const ALL_QUESTIONS: Question[] = [
   ...inmunohematologia,
   ...artritisReumatoide,
   ...lupus,
+  ...artritisReumatoideEnarm,
+  ...lupusEnarm,
+  ...inmunohematologiaEnarm,
 ];
 
 export function questionsForTopic(slug: string): Question[] {

@@ -8,6 +8,9 @@ import { conjuntivitisDa } from "./conjuntivitis-da";
 import { serumSickness } from "./serum-sickness";
 import { psoriasis } from "./psoriasis";
 import { contacto } from "./contacto";
+import { inmunohematologia } from "./inmunohematologia";
+import { artritisReumatoide } from "./artritis-reumatoide";
+import { lupus } from "./lupus";
 
 export const ALL_QUESTIONS: Question[] = [
   ...tolerancia,
@@ -19,6 +22,9 @@ export const ALL_QUESTIONS: Question[] = [
   ...serumSickness,
   ...psoriasis,
   ...contacto,
+  ...inmunohematologia,
+  ...artritisReumatoide,
+  ...lupus,
 ];
 
 export function questionsForTopic(slug: string): Question[] {

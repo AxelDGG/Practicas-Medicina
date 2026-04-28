@@ -92,6 +92,33 @@ export const TOPICS: Topic[] = [
       en: "Haptens, type IV, patch testing, treatment.",
     },
   },
+  {
+    slug: "inmunohematologia",
+    source: "Inmunohematología — Quiz 1",
+    title: { es: "Inmunohematología", en: "Immunohematology" },
+    description: {
+      es: "Anemias, coagulación, LAD, CGD, deficiencias humorales.",
+      en: "Anemias, coagulation, LAD, CGD, humoral deficiencies.",
+    },
+  },
+  {
+    slug: "artritis-reumatoide",
+    source: "Inmunohematología — Quiz 2",
+    title: { es: "Artritis reumatoide", en: "Rheumatoid arthritis" },
+    description: {
+      es: "Sinovitis, pannus, ACPA, HLA-DRB1, citoquinas.",
+      en: "Synovitis, pannus, ACPA, HLA-DRB1, cytokines.",
+    },
+  },
+  {
+    slug: "lupus",
+    source: "Inmunohematología — Quiz 3",
+    title: { es: "Lupus eritematoso sistémico", en: "Systemic lupus erythematosus" },
+    description: {
+      es: "ANA, anti-dsDNA, IFN-I, complemento, daño multisistémico.",
+      en: "ANA, anti-dsDNA, type I IFN, complement, multisystem damage.",
+    },
+  },
 ];
 
 export const TOPIC_BY_SLUG: Record<string, Topic> = Object.fromEntries(

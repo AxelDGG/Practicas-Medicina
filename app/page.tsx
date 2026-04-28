@@ -2,9 +2,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
-import TopicCard from "@/components/TopicCard";
-import { TOPICS } from "@/data/topics";
-import { questionsForTopic } from "@/data/questions";
+import { SUBJECTS } from "@/data/subjects";
+import { ALL_QUESTIONS } from "@/data/questions";
 import { T, useLang } from "@/lib/i18n";
 
 export default function HomePage() {
@@ -28,26 +27,37 @@ export default function HomePage() {
           </p>
         </motion.section>
 
-        <section className="mt-12 grid gap-4 sm:grid-cols-2">
-          <ModeCard
-            href="#temas"
-            title={T.byTopic[lang]}
-            description={T.pickTopic[lang]}
-            scrollTarget="temas"
-          />
-          <ModeCard
-            href="/aleatorio"
-            title={T.random[lang]}
-            description={T.randomMix[lang]}
-          />
-        </section>
-
-        <section id="temas" className="mt-16">
-          <h2 className="font-serif text-2xl text-ink mb-5">{T.byTopic[lang]}</h2>
+        <section id="materias" className="mt-16">
+          <h2 className="font-serif text-2xl text-ink mb-5">{T.bySubject[lang]}</h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            {TOPICS.map((t) => (
-              <TopicCard key={t.slug} topic={t} count={questionsForTopic(t.slug).length} />
-            ))}
+            {SUBJECTS.map((s) => {
+              const count = ALL_QUESTIONS.filter((q) =>
+                s.topicSlugs.includes(q.topic)
+              ).length;
+              return (
+                <motion.div
+                  key={s.slug}
+                  whileHover={{ y: -2 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 20 }}
+                >
+                  <Link
+                    href={`/materia/${s.slug}`}
+                    className="block rounded-2xl border border-line bg-paper p-6 shadow-soft transition-colors hover:border-sage/60"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="font-serif text-lg text-ink">{s.title[lang]}</h3>
+                      <span className="text-xs text-muted whitespace-nowrap">{count}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-muted leading-relaxed">
+                      {s.description[lang]}
+                    </p>
+                    <p className="mt-3 text-[11px] uppercase tracking-wider text-muted/70">
+                      {s.topicSlugs.length} {T.byTopic[lang].toLowerCase()}
+                    </p>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </section>
 
@@ -56,36 +66,5 @@ export default function HomePage() {
         </footer>
       </main>
     </>
-  );
-}
-
-function ModeCard({
-  href,
-  title,
-  description,
-  scrollTarget,
-}: {
-  href: string;
-  title: string;
-  description: string;
-  scrollTarget?: string;
-}) {
-  const onClick = scrollTarget
-    ? (e: React.MouseEvent) => {
-        e.preventDefault();
-        document.getElementById(scrollTarget)?.scrollIntoView({ behavior: "smooth" });
-      }
-    : undefined;
-  return (
-    <motion.div whileHover={{ y: -2 }} transition={{ type: "spring", stiffness: 200, damping: 20 }}>
-      <Link
-        href={href}
-        onClick={onClick}
-        className="block rounded-2xl border border-line bg-paper p-7 shadow-soft hover:border-sage/60 transition-colors"
-      >
-        <h3 className="font-serif text-2xl text-ink">{title}</h3>
-        <p className="mt-2 text-sm text-muted leading-relaxed">{description}</p>
-      </Link>
-    </motion.div>
   );
 }

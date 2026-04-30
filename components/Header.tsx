@@ -14,7 +14,15 @@ export default function Header() {
         >
           {T.brand[lang]}
         </Link>
-        <LangToggle />
+        <div className="flex items-center gap-4">
+          <Link
+            href="/correcciones"
+            className="text-xs text-muted hover:text-ink transition-colors"
+          >
+            {T.corrections[lang]}
+          </Link>
+          <LangToggle />
+        </div>
       </div>
     </header>
   );

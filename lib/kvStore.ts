@@ -1,10 +1,11 @@
-// Storage abstraction: Vercel KV in production, local JSON files in dev.
-// Falls back to fs only when KV env vars are missing (so `npm run dev`
-// without a KV binding keeps working). On Vercel, set up KV via
-// Project → Storage → Connect a database; env vars are auto-injected.
+// Storage abstraction:
+//   - Production (Vercel + Marketplace Redis): uses node-redis. The integration
+//     injects REDIS_URL automatically. Connection is reused across invocations.
+//   - Local dev (no REDIS_URL): falls back to JSON files in /data so
+//     `npm run dev` works without any setup.
 import { promises as fs } from "fs";
 import path from "path";
-import { kv } from "@vercel/kv";
+import { createClient, type RedisClientType } from "redis";
 
 export const KEYS = {
   overrides: "pm:overrides",
@@ -19,12 +20,41 @@ const FALLBACK_FILES: Record<string, string> = {
   [KEYS.log]: "corrections-log.json",
 };
 
-function kvAvailable(): boolean {
-  return !!(
-    process.env.KV_REST_API_URL ||
-    process.env.KV_URL ||
-    process.env.UPSTASH_REDIS_REST_URL
+function redisUrl(): string | undefined {
+  return (
+    process.env.REDIS_URL ||
+    process.env.REDIS_TLS_URL ||
+    process.env.KV_URL // legacy Vercel KV that exposes redis://
   );
+}
+
+// Cache the client across serverless invocations within the same warm container.
+let _client: RedisClientType | null = null;
+let _connectPromise: Promise<RedisClientType> | null = null;
+
+async function getClient(): Promise<RedisClientType> {
+  const url = redisUrl();
+  if (!url) throw new Error("no_redis_url");
+  if (_client && _client.isOpen) return _client;
+  if (!_connectPromise) {
+    _connectPromise = (async () => {
+      const c: RedisClientType = createClient({
+        url,
+        socket: { reconnectStrategy: false },
+      });
+      c.on("error", (err) => {
+        // Log but don't crash; next call will try a new client.
+        console.error("[redis] client error:", err?.message || err);
+      });
+      await c.connect();
+      _client = c;
+      return c;
+    })().catch((e) => {
+      _connectPromise = null;
+      throw e;
+    });
+  }
+  return _connectPromise;
 }
 
 export type OverrideEntry = {
@@ -70,22 +100,28 @@ async function fsWrite<T>(key: string, value: T) {
       "utf-8"
     );
   } catch {
-    // On Vercel without KV: filesystem is read-only and write will throw.
-    // Swallow — the API will surface a clearer error if needed.
+    // Read-only filesystem (e.g. Vercel without Redis): swallow.
   }
 }
 
 export async function getStore<T>(key: string, fallback: T): Promise<T> {
-  if (kvAvailable()) {
-    const val = (await kv.get<T>(key)) as T | null;
-    return val ?? fallback;
+  if (redisUrl()) {
+    try {
+      const c = await getClient();
+      const raw = await c.get(key);
+      if (raw == null) return fallback;
+      return JSON.parse(raw) as T;
+    } catch (e: any) {
+      console.error("[redis] getStore failed, falling back to fs:", e?.message);
+    }
   }
   return fsRead(key, fallback);
 }
 
 export async function setStore<T>(key: string, value: T): Promise<void> {
-  if (kvAvailable()) {
-    await kv.set(key, value);
+  if (redisUrl()) {
+    const c = await getClient();
+    await c.set(key, JSON.stringify(value));
     return;
   }
   await fsWrite(key, value);

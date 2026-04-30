@@ -6,6 +6,7 @@ import { shuffle } from "@/lib/shuffle";
 import { T, useLang } from "@/lib/i18n";
 import ProgressBar from "./ProgressBar";
 import ResultScreen from "./ResultScreen";
+import ReportCorrection from "./ReportCorrection";
 
 type Prepared = {
   q: Question;
@@ -36,6 +37,7 @@ export default function Quiz({
   const [picked, setPicked] = useState<number | null>(null);
   const [answers, setAnswers] = useState<{ q: Question; pickedCorrect: boolean }[]>([]);
   const [done, setDone] = useState(false);
+  const [reporting, setReporting] = useState(false);
 
   const total = prepared.length;
   const current = prepared[index];
@@ -89,6 +91,15 @@ export default function Quiz({
           transition={{ duration: 0.18, ease: "easeOut" }}
           className="rounded-2xl border border-line bg-paper p-6 sm:p-8 shadow-soft"
         >
+          {current.q.imageUrl && (
+            <div className="mb-5 rounded-xl overflow-hidden border border-line bg-cream">
+              <img
+                src={current.q.imageUrl}
+                alt=""
+                className="w-full max-h-[60vh] object-contain block mx-auto"
+              />
+            </div>
+          )}
           <h2 className="font-serif text-xl sm:text-2xl text-ink leading-snug">
             {current.q.prompt[lang]}
           </h2>
@@ -142,7 +153,15 @@ export default function Quiz({
             )}
           </AnimatePresence>
 
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex items-center justify-end gap-3">
+            {picked !== null && (
+              <button
+                onClick={() => setReporting(true)}
+                className="text-xs text-muted hover:text-terracottaDark underline-offset-4 hover:underline"
+              >
+                {T.reportCorrection[lang]}
+              </button>
+            )}
             <button
               onClick={next}
               disabled={picked === null}
@@ -153,6 +172,14 @@ export default function Quiz({
           </div>
         </motion.div>
       </AnimatePresence>
+
+      {reporting && (
+        <ReportCorrection
+          question={current.q}
+          displayedOptions={current.options}
+          onClose={() => setReporting(false)}
+        />
+      )}
     </div>
   );
 }

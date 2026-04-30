@@ -7,4 +7,5 @@ export type Question = {
   options: LocaleString[]; // exactly 4
   answerIndex: number;
   explanation: LocaleString;
+  imageUrl?: string;
 };

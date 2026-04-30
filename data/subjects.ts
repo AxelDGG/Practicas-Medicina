@@ -43,6 +43,27 @@ export const SUBJECTS: Subject[] = [
       "contacto",
     ],
   },
+  {
+    slug: "patologia-imagenes",
+    title: { es: "Patología por imágenes", en: "Pathology by images" },
+    description: {
+      es: "Reconoce enfermedades, lesiones e infecciones en imágenes histológicas y macroscópicas.",
+      en: "Recognize diseases, lesions and infections from histologic and gross images.",
+    },
+    topicSlugs: [
+      "patologia-cardiacas",
+      "patologia-pancreas-higado",
+      "patologia-gi",
+      "patologia-gi-infecciones",
+      "patologia-hiv-sida",
+      "patologia-hematopatologia",
+      "patologia-neuroinfecciones",
+      "patologia-pulmonar-infecciones",
+      "patologia-ar-imagenes",
+      "patologia-les-imagenes",
+      "patologia-trasplantes",
+    ],
+  },
 ];
 
 export const SUBJECT_BY_SLUG: Record<string, Subject> = Object.fromEntries(

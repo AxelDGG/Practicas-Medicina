@@ -1,5 +1,4 @@
 import type { Question } from "../types";
-import { prepareQuestions } from "@/lib/runtimeBank";
 import { tolerancia } from "./tolerancia";
 import { hipersensibilidad } from "./hipersensibilidad";
 import { asma } from "./asma";
@@ -27,7 +26,7 @@ import { patologiaArImagenes } from "./patologia-ar-imagenes";
 import { patologiaLesImagenes } from "./patologia-les-imagenes";
 import { patologiaTrasplantes } from "./patologia-trasplantes";
 
-const RAW_QUESTIONS: Question[] = [
+export const RAW_QUESTIONS: Question[] = [
   ...tolerancia,
   ...hipersensibilidad,
   ...asma,
@@ -56,9 +55,10 @@ const RAW_QUESTIONS: Question[] = [
   ...patologiaTrasplantes,
 ];
 
-// Apply runtime corrections (overrides) and remove questions flagged as useless.
-export const ALL_QUESTIONS: Question[] = prepareQuestions(RAW_QUESTIONS);
+// Build-time questions. Runtime overrides + disabled filtering happen in the
+// page server components (which read from Vercel KV / fs at request time).
+export const ALL_QUESTIONS: Question[] = RAW_QUESTIONS;
 
 export function questionsForTopic(slug: string): Question[] {
-  return ALL_QUESTIONS.filter((q) => q.topic === slug);
+  return RAW_QUESTIONS.filter((q) => q.topic === slug);
 }

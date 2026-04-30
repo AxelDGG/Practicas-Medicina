@@ -1,21 +1,26 @@
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
-import { SUBJECTS, SUBJECT_BY_SLUG } from "@/data/subjects";
-import { ALL_QUESTIONS } from "@/data/questions";
+import { SUBJECT_BY_SLUG } from "@/data/subjects";
+import { RAW_QUESTIONS } from "@/data/questions";
+import { getOverrides, getUseless } from "@/lib/kvStore";
+import { prepareQuestions } from "@/lib/runtimeBank";
 import SubjectRandomQuiz from "./SubjectRandomQuiz";
 
-export function generateStaticParams() {
-  return SUBJECTS.map((s) => ({ slug: s.slug }));
-}
+export const dynamic = "force-dynamic";
 
-export default function SubjectRandomPage({
+export default async function SubjectRandomPage({
   params,
 }: {
   params: { slug: string };
 }) {
   const subject = SUBJECT_BY_SLUG[params.slug];
   if (!subject) notFound();
-  const questions = ALL_QUESTIONS.filter((q) => subject.topicSlugs.includes(q.topic));
+  const [overrides, useless] = await Promise.all([getOverrides(), getUseless()]);
+  const questions = prepareQuestions(
+    RAW_QUESTIONS.filter((q) => subject.topicSlugs.includes(q.topic)),
+    overrides,
+    useless
+  );
 
   return (
     <>

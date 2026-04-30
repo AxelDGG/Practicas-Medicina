@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
-import {
-  LOG_PATH,
-  OVERRIDES_PATH,
-  USELESS_PATH,
-  readJSON,
-} from "@/lib/storage-paths";
+import { getOverrides, getUseless, getLog } from "@/lib/kvStore";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET() {
-  const [overrides, useless, log] = await Promise.all([
-    readJSON(OVERRIDES_PATH, {}),
-    readJSON<{ byQuestion: Record<string, any[]> }>(USELESS_PATH, { byQuestion: {} }),
-    readJSON<any[]>(LOG_PATH, []),
-  ]);
-  return NextResponse.json({ overrides, useless, log });
+  try {
+    const [overrides, useless, log] = await Promise.all([
+      getOverrides(),
+      getUseless(),
+      getLog(),
+    ]);
+    return NextResponse.json({ overrides, useless, log });
+  } catch (e: any) {
+    return NextResponse.json(
+      { error: "storage_failed", detail: String(e?.message || e) },
+      { status: 503 }
+    );
+  }
 }

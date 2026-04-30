@@ -1,17 +1,22 @@
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
-import { TOPIC_BY_SLUG, TOPICS } from "@/data/topics";
-import { questionsForTopic } from "@/data/questions";
+import { TOPIC_BY_SLUG } from "@/data/topics";
+import { RAW_QUESTIONS } from "@/data/questions";
+import { getOverrides, getUseless } from "@/lib/kvStore";
+import { prepareQuestions } from "@/lib/runtimeBank";
 import TopicQuiz from "./TopicQuiz";
 
-export function generateStaticParams() {
-  return TOPICS.map((t) => ({ slug: t.slug }));
-}
+export const dynamic = "force-dynamic";
 
-export default function TopicPage({ params }: { params: { slug: string } }) {
+export default async function TopicPage({ params }: { params: { slug: string } }) {
   const topic = TOPIC_BY_SLUG[params.slug];
   if (!topic) notFound();
-  const questions = questionsForTopic(topic.slug);
+  const [overrides, useless] = await Promise.all([getOverrides(), getUseless()]);
+  const questions = prepareQuestions(
+    RAW_QUESTIONS.filter((q) => q.topic === topic.slug),
+    overrides,
+    useless
+  );
 
   return (
     <>

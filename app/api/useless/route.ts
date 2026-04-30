@@ -19,7 +19,7 @@ type UselessStore = {
   byQuestion: Record<string, UselessReport[]>;
 };
 
-export const DISABLE_THRESHOLD = 2;
+const DISABLE_THRESHOLD = 2;
 
 export async function POST(req: Request) {
   let body: any;
